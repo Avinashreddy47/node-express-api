@@ -1,16 +1,18 @@
 import { Router } from 'express';
 import { UserController } from '../controllers/userController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
+import { authLimiter } from '../middleware/rateLimiter.js';
 import { validateRequest, schemas } from '../middleware/validationMiddleware.js';
 
 const router = Router();
 
 /**
  * Public Routes
+ * Auth endpoints use stricter rate limiting
  */
-router.post('/register', validateRequest(schemas.userCreate), UserController.register);
+router.post('/register', authLimiter, validateRequest(schemas.userCreate), UserController.register);
 
-router.post('/login', validateRequest(schemas.login), UserController.login);
+router.post('/login', authLimiter, validateRequest(schemas.login), UserController.login);
 
 /**
  * Protected Routes

@@ -1,5 +1,6 @@
 import config from '../config/index.js';
 import { errorResponse } from '../utils/response.js';
+import { logger } from '../utils/logger.js';
 
 /**
  * Global Error Handler Middleware
@@ -9,14 +10,12 @@ export const errorHandler = (err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal server error';
 
-  // Log error details in development
-  if (config.isDevelopment) {
-    console.error('Error:', {
-      message: err.message,
-      stack: err.stack,
-      statusCode,
-    });
-  }
+  logger.error('Request error', err, {
+    requestId: req.id,
+    method: req.method,
+    url: req.originalUrl,
+    statusCode,
+  });
 
   return res.status(statusCode).json(errorResponse(message, statusCode, err.errors || null));
 };
@@ -25,6 +24,12 @@ export const errorHandler = (err, req, res, next) => {
  * 404 Not Found Middleware
  */
 export const notFoundHandler = (req, res) => {
+  logger.warn('Route not found', {
+    requestId: req.id,
+    method: req.method,
+    url: req.originalUrl,
+  });
+
   return res
     .status(404)
     .json(errorResponse(`Route ${req.method} ${req.originalUrl} not found`, 404));

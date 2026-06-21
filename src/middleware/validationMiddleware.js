@@ -1,5 +1,24 @@
 import Joi from 'joi';
+import xss from 'xss';
 import { errorResponse } from '../utils/response.js';
+import { logger } from '../utils/logger.js';
+
+/**
+ * Sanitize input to prevent XSS attacks
+ */
+const sanitizeValue = (value) => {
+  if (typeof value === 'string') {
+    return xss(value.trim());
+  }
+  if (typeof value === 'object' && value !== null) {
+    const sanitized = {};
+    for (const [key, val] of Object.entries(value)) {
+      sanitized[key] = sanitizeValue(val);
+    }
+    return sanitized;
+  }
+  return value;
+};
 
 /**
  * Validation Middleware Factory
@@ -7,7 +26,10 @@ import { errorResponse } from '../utils/response.js';
  */
 export const validateRequest = (schema, source = 'body') => {
   return (req, res, next) => {
-    const { error, value } = schema.validate(req[source], {
+    // Sanitize input first
+    const sanitized = sanitizeValue(req[source]);
+
+    const { error, value } = schema.validate(sanitized, {
       abortEarly: false,
       stripUnknown: true,
     });
@@ -18,6 +40,7 @@ export const validateRequest = (schema, source = 'body') => {
         return acc;
       }, {});
 
+      logger.warn('Validation failed', { source, errors });
       return res.status(400).json(errorResponse('Validation failed', 400, errors));
     }
 

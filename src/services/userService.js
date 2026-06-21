@@ -1,10 +1,15 @@
 import { v4 as uuidv4 } from 'uuid';
+import bcrypt from 'bcryptjs';
 import { ApiError } from '../middleware/errorHandler.js';
+import { logger } from '../utils/logger.js';
 
 /**
  * In-memory user store (would be database in production)
  */
 let users = new Map();
+
+// Password hashing configuration
+const SALT_ROUNDS = 10;
 
 /**
  * User Service Layer
@@ -12,26 +17,31 @@ let users = new Map();
  */
 export class UserService {
   /**
-   * Create a new user
+   * Create a new user with hashed password
    */
-  static createUser(userData) {
+  static async createUser(userData) {
     const { email, username, password } = userData;
 
     // Check if user already exists
     if (Array.from(users.values()).some((u) => u.email === email || u.username === username)) {
+      logger.warn('Duplicate user registration attempt', { email, username });
       throw new ApiError('User with this email or username already exists', 409);
     }
+
+    // Hash password securely
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
     const user = {
       id: uuidv4(),
       email,
       username,
-      password, // In production: hash with bcrypt
+      password: hashedPassword, // Stored securely
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
     users.set(user.id, user);
+    logger.info('User created', { userId: user.id, username });
     return this._sanitizeUser(user);
   }
 
@@ -41,6 +51,7 @@ export class UserService {
   static getUserById(userId) {
     const user = users.get(userId);
     if (!user) {
+      logger.warn('User not found', { userId });
       throw new ApiError('User not found', 404);
     }
     return this._sanitizeUser(user);
@@ -64,12 +75,18 @@ export class UserService {
   }
 
   /**
-   * Update user
+   * Update user with optional password re-hashing
    */
-  static updateUser(userId, updateData) {
+  static async updateUser(userId, updateData) {
     const user = users.get(userId);
     if (!user) {
+      logger.warn('Update failed - user not found', { userId });
       throw new ApiError('User not found', 404);
+    }
+
+    // If password is being updated, hash it
+    if (updateData.password) {
+      updateData.password = await bcrypt.hash(updateData.password, SALT_ROUNDS);
     }
 
     const updated = {
@@ -79,6 +96,7 @@ export class UserService {
     };
 
     users.set(userId, updated);
+    logger.info('User updated', { userId });
     return this._sanitizeUser(updated);
   }
 
@@ -87,24 +105,34 @@ export class UserService {
    */
   static deleteUser(userId) {
     if (!users.has(userId)) {
+      logger.warn('Delete failed - user not found', { userId });
       throw new ApiError('User not found', 404);
     }
     users.delete(userId);
+    logger.info('User deleted', { userId });
     return true;
   }
 
   /**
-   * Authenticate user (login)
+   * Authenticate user with secure password comparison
    */
-  static authenticateUser(username, password) {
-    const user = Array.from(users.values()).find(
-      (u) => u.username === username && u.password === password,
-    );
+  static async authenticateUser(username, password) {
+    const user = Array.from(users.values()).find((u) => u.username === username);
 
     if (!user) {
+      logger.warn('Authentication failed - user not found', { username });
       throw new ApiError('Invalid credentials', 401);
     }
 
+    // Use bcrypt to compare passwords securely
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      logger.warn('Authentication failed - invalid password', { username });
+      throw new ApiError('Invalid credentials', 401);
+    }
+
+    logger.info('User authenticated', { userId: user.id, username });
     return this._sanitizeUser(user);
   }
 
