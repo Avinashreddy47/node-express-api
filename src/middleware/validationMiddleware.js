@@ -9,7 +9,7 @@ export const validateRequest = (schema, source = 'body') => {
   return (req, res, next) => {
     const { error, value } = schema.validate(req[source], {
       abortEarly: false,
-      stripUnknown: true
+      stripUnknown: true,
     });
 
     if (error) {
@@ -18,9 +18,7 @@ export const validateRequest = (schema, source = 'body') => {
         return acc;
       }, {});
 
-      return res.status(400).json(
-        errorResponse('Validation failed', 400, errors)
-      );
+      return res.status(400).json(errorResponse('Validation failed', 400, errors));
     }
 
     req[source] = value;
@@ -33,28 +31,28 @@ export const validateRequest = (schema, source = 'body') => {
  */
 export const schemas = {
   userId: Joi.object({
-    id: Joi.string().uuid().required()
+    id: Joi.string().uuid().required(),
   }),
 
   userCreate: Joi.object({
     email: Joi.string().email().required(),
     username: Joi.string().alphanum().min(3).max(30).required(),
-    password: Joi.string().min(6).required()
+    password: Joi.string().min(6).required(),
   }),
 
   userUpdate: Joi.object({
     email: Joi.string().email(),
     username: Joi.string().alphanum().min(3).max(30),
-    password: Joi.string().min(6)
+    password: Joi.string().min(6),
   }).min(1),
 
   login: Joi.object({
     username: Joi.string().required(),
-    password: Joi.string().required()
+    password: Joi.string().required(),
   }),
 
   pagination: Joi.object({
     page: Joi.number().integer().min(1).default(1),
-    limit: Joi.number().integer().min(1).max(100).default(10)
-  })
+    limit: Joi.number().integer().min(1).max(100).default(10),
+  }),
 };

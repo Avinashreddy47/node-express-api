@@ -7,7 +7,7 @@ export const successResponse = (data, message = 'Success', statusCode = 200) => 
     statusCode,
     message,
     data,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 };
 
@@ -17,7 +17,7 @@ export const errorResponse = (message, statusCode = 500, errors = null) => {
     statusCode,
     message,
     errors,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 };
 
@@ -31,8 +31,8 @@ export const paginatedResponse = (data, page, limit, total, message = 'Success')
       page,
       limit,
       total,
-      pages: Math.ceil(total / limit)
+      pages: Math.ceil(total / limit),
     },
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 };

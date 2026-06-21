@@ -26,17 +26,14 @@ export class UserController {
     try {
       const { username, password } = req.body;
       const user = UserService.authenticateUser(username, password);
-      
+
       const token = generateToken({
         id: user.id,
         username: user.username,
-        email: user.email
+        email: user.email,
       });
 
-      return res.json(successResponse(
-        { user, token },
-        'Login successful'
-      ));
+      return res.json(successResponse({ user, token }, 'Login successful'));
     } catch (error) {
       next(error);
     }
@@ -61,14 +58,16 @@ export class UserController {
     try {
       const { page = 1, limit = 10 } = req.query;
       const result = UserService.getAllUsers(parseInt(page), parseInt(limit));
-      
-      return res.json(paginatedResponse(
-        result.users,
-        result.page,
-        result.limit,
-        result.total,
-        'Users retrieved successfully'
-      ));
+
+      return res.json(
+        paginatedResponse(
+          result.users,
+          result.page,
+          result.limit,
+          result.total,
+          'Users retrieved successfully',
+        ),
+      );
     } catch (error) {
       next(error);
     }

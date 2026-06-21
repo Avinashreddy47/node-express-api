@@ -29,7 +29,7 @@ app.get('/health', (req, res) => {
   return res.json({
     status: 'ok',
     environment: config.environment,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 

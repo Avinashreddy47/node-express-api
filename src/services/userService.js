@@ -18,7 +18,7 @@ export class UserService {
     const { email, username, password } = userData;
 
     // Check if user already exists
-    if (Array.from(users.values()).some(u => u.email === email || u.username === username)) {
+    if (Array.from(users.values()).some((u) => u.email === email || u.username === username)) {
       throw new ApiError('User with this email or username already exists', 409);
     }
 
@@ -28,7 +28,7 @@ export class UserService {
       username,
       password, // In production: hash with bcrypt
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     users.set(user.id, user);
@@ -56,10 +56,10 @@ export class UserService {
     const paginatedUsers = allUsers.slice(startIndex, startIndex + limit);
 
     return {
-      users: paginatedUsers.map(u => this._sanitizeUser(u)),
+      users: paginatedUsers.map((u) => this._sanitizeUser(u)),
       total,
       page,
-      limit
+      limit,
     };
   }
 
@@ -75,7 +75,7 @@ export class UserService {
     const updated = {
       ...user,
       ...updateData,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     users.set(userId, updated);
@@ -98,7 +98,7 @@ export class UserService {
    */
   static authenticateUser(username, password) {
     const user = Array.from(users.values()).find(
-      u => u.username === username && u.password === password
+      (u) => u.username === username && u.password === password,
     );
 
     if (!user) {

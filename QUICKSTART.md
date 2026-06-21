@@ -1,11 +1,13 @@
 ## Quick Start Guide
 
 ### 1. Install Dependencies
+
 ```bash
 npm install
 ```
 
 ### 2. Configure Environment
+
 ```bash
 # Copy the example environment file
 cp .env.example .env
@@ -14,6 +16,7 @@ cp .env.example .env
 ```
 
 ### 3. Start the Server
+
 ```bash
 # Development mode with auto-reload
 npm run dev
@@ -23,6 +26,7 @@ npm start
 ```
 
 You should see:
+
 ```
 ╔════════════════════════════════════════════════╗
 ║         Node.js Express API Server              ║
@@ -36,11 +40,13 @@ You should see:
 ### 4. Test the API
 
 #### Health Check
+
 ```bash
 curl http://localhost:3000/health
 ```
 
 #### Register a User
+
 ```bash
 curl -X POST http://localhost:3000/api/v1/register \
   -H "Content-Type: application/json" \
@@ -52,6 +58,7 @@ curl -X POST http://localhost:3000/api/v1/register \
 ```
 
 #### Login
+
 ```bash
 curl -X POST http://localhost:3000/api/v1/login \
   -H "Content-Type: application/json" \
@@ -64,6 +71,7 @@ curl -X POST http://localhost:3000/api/v1/login \
 Store the returned `token` for authenticated requests.
 
 #### Get All Users (Replace TOKEN with your token)
+
 ```bash
 curl http://localhost:3000/api/v1/users \
   -H "Authorization: Bearer TOKEN"
@@ -72,6 +80,7 @@ curl http://localhost:3000/api/v1/users \
 ### 5. Understanding the Code
 
 **File Flow for a Request:**
+
 1. `server.js` → Entry point
 2. `app.js` → Express app with middleware chain
 3. `middleware/` → Request processing (logging, auth, validation)
@@ -105,6 +114,7 @@ node --version
 ### 8. Troubleshooting
 
 **Port already in use?**
+
 ```bash
 # Kill process on port 3000
 lsof -i :3000
@@ -112,6 +122,7 @@ kill -9 <PID>
 ```
 
 **Module not found?**
+
 ```bash
 # Reinstall dependencies
 rm -rf node_modules package-lock.json
@@ -119,6 +130,7 @@ npm install
 ```
 
 **Invalid token?**
+
 - Ensure you're using the token from login response
 - Prefix with "Bearer " in Authorization header
 - Tokens expire after 24h (configurable in .env)

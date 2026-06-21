@@ -44,11 +44,13 @@ src/
 ## 🚀 Key Features
 
 ### 1. **Modular Route Handlers**
+
 - Clean separation of concerns
 - Composable middleware chain
 - Route-level and global middleware support
 
 ### 2. **Composable Middleware Chain**
+
 - **JWT Authentication**: Token-based access control with Bearer scheme
 - **Request Validation**: Schema-based validation using Joi
 - **Centralized Error Handling**: Consistent error response envelopes
@@ -56,7 +58,9 @@ src/
 - **CORS**: Cross-origin resource sharing
 
 ### 3. **Structured JSON Contracts**
+
 - Consistent success response envelope:
+
   ```json
   {
     "success": true,
@@ -81,6 +85,7 @@ src/
   ```
 
 ### 4. **HTTP Status Semantics**
+
 - `201 Created`: Resource creation
 - `400 Bad Request`: Validation errors
 - `401 Unauthorized`: Missing/invalid authentication
@@ -89,6 +94,7 @@ src/
 - `500 Internal Server Error`: Server errors
 
 ### 5. **Environment-Based Configuration**
+
 - Development/production modes
 - JWT secret and expiration management
 - Port and logging level configuration
@@ -106,6 +112,7 @@ src/
 ## 🛠️ Installation & Setup
 
 ### Prerequisites
+
 - Node.js >= 14.0.0
 - npm or yarn
 
@@ -145,6 +152,7 @@ Server starts on `http://localhost:3000` by default.
 ## 📖 API Endpoints
 
 ### Health Check
+
 ```http
 GET /health
 ```
@@ -152,6 +160,7 @@ GET /health
 ### Authentication
 
 #### Register
+
 ```http
 POST /api/v1/register
 Content-Type: application/json
@@ -164,6 +173,7 @@ Content-Type: application/json
 ```
 
 Response (201 Created):
+
 ```json
 {
   "success": true,
@@ -181,6 +191,7 @@ Response (201 Created):
 ```
 
 #### Login
+
 ```http
 POST /api/v1/login
 Content-Type: application/json
@@ -192,6 +203,7 @@ Content-Type: application/json
 ```
 
 Response (200 OK):
+
 ```json
 {
   "success": true,
@@ -216,18 +228,21 @@ Response (200 OK):
 All endpoints below require `Authorization: Bearer <token>` header.
 
 #### Get All Users (Paginated)
+
 ```http
 GET /api/v1/users?page=1&limit=10
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 #### Get User by ID
+
 ```http
 GET /api/v1/users/{userId}
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 #### Update User
+
 ```http
 PUT /api/v1/users/{userId}
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -240,6 +255,7 @@ Content-Type: application/json
 ```
 
 #### Delete User
+
 ```http
 DELETE /api/v1/users/{userId}
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -256,35 +272,42 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ## 🎯 Design Patterns Demonstrated
 
 ### 1. **MVC/MVS Architecture**
+
 - **Models**: User domain objects
 - **Views**: Structured JSON response envelopes
 - **Controllers**: Request handlers with HTTP semantics
 - **Services**: Business logic and data operations
 
 ### 2. **Middleware Chain Pattern**
+
 Composable middleware that processes requests sequentially:
+
 ```javascript
-app.use(requestLogger);           // 1. Log request
-app.use(express.json());          // 2. Parse body
-app.use(cors());                  // 3. Handle CORS
-app.use(authMiddleware);          // 4. Authenticate
-app.use(validateRequest);         // 5. Validate
+app.use(requestLogger); // 1. Log request
+app.use(express.json()); // 2. Parse body
+app.use(cors()); // 3. Handle CORS
+app.use(authMiddleware); // 4. Authenticate
+app.use(validateRequest); // 5. Validate
 // Handle route
 // 6. Error handling
 ```
 
 ### 3. **Dependency Injection**
+
 Services receive dependencies through static methods, enabling testability.
 
 ### 4. **Error Response Standardization**
+
 All errors return consistent envelope with status code, message, and validation details.
 
 ### 5. **Factory Pattern**
+
 `validateRequest()` creates validation middleware dynamically based on schema.
 
 ## 🔄 Cross-Runtime Compatibility
 
 This project demonstrates patterns applicable across:
+
 - **Java/Spring Boot**: Service layer, DTO validation, exception handling
 - **Go**: Interface-based design, middleware chaining, error types
 - **Python**: Blueprint structure, middleware decorators
@@ -292,14 +315,20 @@ This project demonstrates patterns applicable across:
 ## 📝 Example: Adding a New Resource
 
 1. **Create Service** (`src/services/productService.js`):
+
 ```javascript
 export class ProductService {
-  static create(data) { /* business logic */ }
-  static getById(id) { /* business logic */ }
+  static create(data) {
+    /* business logic */
+  }
+  static getById(id) {
+    /* business logic */
+  }
 }
 ```
 
 2. **Create Controller** (`src/controllers/productController.js`):
+
 ```javascript
 export class ProductController {
   static async create(req, res, next) {
@@ -314,15 +343,18 @@ export class ProductController {
 ```
 
 3. **Create Routes** (`src/routes/productRoutes.js`):
+
 ```javascript
-router.post('/products',
+router.post(
+  '/products',
   authMiddleware,
   validateRequest(schemas.productCreate),
-  ProductController.create
+  ProductController.create,
 );
 ```
 
 4. **Add to App** (`src/app.js`):
+
 ```javascript
 app.use(`/api/${config.api.version}`, productRoutes);
 ```

@@ -11,18 +11,14 @@ export const authMiddleware = (req, res, next) => {
     const token = extractTokenFromHeader(authHeader);
 
     if (!token) {
-      return res.status(401).json(
-        errorResponse('Missing or invalid Authorization header', 401)
-      );
+      return res.status(401).json(errorResponse('Missing or invalid Authorization header', 401));
     }
 
     const decoded = verifyToken(token);
     req.user = decoded;
     next();
   } catch (error) {
-    return res.status(401).json(
-      errorResponse(error.message || 'Authentication failed', 401)
-    );
+    return res.status(401).json(errorResponse(error.message || 'Authentication failed', 401));
   }
 };
 

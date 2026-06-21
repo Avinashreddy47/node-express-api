@@ -8,38 +8,24 @@ const router = Router();
 /**
  * Public Routes
  */
-router.post('/register',
-  validateRequest(schemas.userCreate),
-  UserController.register
-);
+router.post('/register', validateRequest(schemas.userCreate), UserController.register);
 
-router.post('/login',
-  validateRequest(schemas.login),
-  UserController.login
-);
+router.post('/login', validateRequest(schemas.login), UserController.login);
 
 /**
  * Protected Routes
  */
-router.get('/users',
-  authMiddleware,
-  UserController.listUsers
-);
+router.get('/users', authMiddleware, UserController.listUsers);
 
-router.get('/users/:id',
-  authMiddleware,
-  UserController.getUser
-);
+router.get('/users/:id', authMiddleware, UserController.getUser);
 
-router.put('/users/:id',
+router.put(
+  '/users/:id',
   authMiddleware,
   validateRequest(schemas.userUpdate),
-  UserController.updateUser
+  UserController.updateUser,
 );
 
-router.delete('/users/:id',
-  authMiddleware,
-  UserController.deleteUser
-);
+router.delete('/users/:id', authMiddleware, UserController.deleteUser);
 
 export default router;

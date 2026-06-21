@@ -6,7 +6,7 @@ import config from '../config/index.js';
  */
 export const generateToken = (payload) => {
   return jwt.sign(payload, config.jwt.secret, {
-    expiresIn: config.jwt.expiresIn
+    expiresIn: config.jwt.expiresIn,
   });
 };
 
@@ -32,11 +32,11 @@ export const verifyToken = (token) => {
  */
 export const extractTokenFromHeader = (authHeader) => {
   if (!authHeader) return null;
-  
+
   const parts = authHeader.split(' ');
   if (parts.length !== 2 || parts[0] !== 'Bearer') {
     return null;
   }
-  
+
   return parts[1];
 };

@@ -8,28 +8,26 @@ import { errorResponse } from '../utils/response.js';
 export const errorHandler = (err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal server error';
-  
+
   // Log error details in development
   if (config.isDevelopment) {
     console.error('Error:', {
       message: err.message,
       stack: err.stack,
-      statusCode
+      statusCode,
     });
   }
 
-  return res.status(statusCode).json(
-    errorResponse(message, statusCode, err.errors || null)
-  );
+  return res.status(statusCode).json(errorResponse(message, statusCode, err.errors || null));
 };
 
 /**
  * 404 Not Found Middleware
  */
 export const notFoundHandler = (req, res) => {
-  return res.status(404).json(
-    errorResponse(`Route ${req.method} ${req.originalUrl} not found`, 404)
-  );
+  return res
+    .status(404)
+    .json(errorResponse(`Route ${req.method} ${req.originalUrl} not found`, 404));
 };
 
 /**

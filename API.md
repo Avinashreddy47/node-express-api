@@ -1,6 +1,7 @@
 # API Documentation
 
 ## Base URL
+
 ```
 http://localhost:3000/api/v1
 ```
@@ -8,11 +9,13 @@ http://localhost:3000/api/v1
 ## Health Check
 
 ### Endpoint
+
 ```
 GET /health
 ```
 
 ### Response
+
 ```json
 {
   "status": "ok",
@@ -28,6 +31,7 @@ GET /health
 ### Register (Public)
 
 **Request**
+
 ```http
 POST /register
 Content-Type: application/json
@@ -40,11 +44,13 @@ Content-Type: application/json
 ```
 
 **Validation Rules**
+
 - `email`: Valid email format (required)
 - `username`: Alphanumeric, 3-30 characters (required)
 - `password`: Minimum 6 characters (required)
 
 **Success Response (201 Created)**
+
 ```json
 {
   "success": true,
@@ -62,6 +68,7 @@ Content-Type: application/json
 ```
 
 **Error Response (409 Conflict)**
+
 ```json
 {
   "success": false,
@@ -73,6 +80,7 @@ Content-Type: application/json
 ```
 
 **Error Response (400 Bad Request)**
+
 ```json
 {
   "success": false,
@@ -91,6 +99,7 @@ Content-Type: application/json
 ### Login (Public)
 
 **Request**
+
 ```http
 POST /login
 Content-Type: application/json
@@ -102,10 +111,12 @@ Content-Type: application/json
 ```
 
 **Validation Rules**
+
 - `username`: String (required)
 - `password`: String (required)
 
 **Success Response (200 OK)**
+
 ```json
 {
   "success": true,
@@ -126,6 +137,7 @@ Content-Type: application/json
 ```
 
 **Error Response (401 Unauthorized)**
+
 ```json
 {
   "success": false,
@@ -141,6 +153,7 @@ Content-Type: application/json
 ## Protected Endpoints
 
 **All endpoints below require:**
+
 ```http
 Authorization: Bearer <token>
 ```
@@ -152,16 +165,19 @@ Where `<token>` is the JWT token received from login.
 ### Get All Users (Paginated)
 
 **Request**
+
 ```http
 GET /users?page=1&limit=10
 Authorization: Bearer <token>
 ```
 
 **Query Parameters**
+
 - `page`: Page number (default: 1, min: 1)
 - `limit`: Results per page (default: 10, min: 1, max: 100)
 
 **Success Response (200 OK)**
+
 ```json
 {
   "success": true,
@@ -191,15 +207,18 @@ Authorization: Bearer <token>
 ### Get User by ID
 
 **Request**
+
 ```http
 GET /users/{userId}
 Authorization: Bearer <token>
 ```
 
 **Path Parameters**
+
 - `userId`: UUID of the user
 
 **Success Response (200 OK)**
+
 ```json
 {
   "success": true,
@@ -217,6 +236,7 @@ Authorization: Bearer <token>
 ```
 
 **Error Response (404 Not Found)**
+
 ```json
 {
   "success": false,
@@ -232,6 +252,7 @@ Authorization: Bearer <token>
 ### Update User
 
 **Request**
+
 ```http
 PUT /users/{userId}
 Authorization: Bearer <token>
@@ -245,14 +266,17 @@ Content-Type: application/json
 ```
 
 **Path Parameters**
+
 - `userId`: UUID of the user
 
 **Body (at least one field required)**
+
 - `email`: Valid email format (optional)
 - `username`: Alphanumeric, 3-30 characters (optional)
 - `password`: Minimum 6 characters (optional)
 
 **Success Response (200 OK)**
+
 ```json
 {
   "success": true,
@@ -274,15 +298,18 @@ Content-Type: application/json
 ### Delete User
 
 **Request**
+
 ```http
 DELETE /users/{userId}
 Authorization: Bearer <token>
 ```
 
 **Path Parameters**
+
 - `userId`: UUID of the user
 
 **Success Response (200 OK)**
+
 ```json
 {
   "success": true,
@@ -294,6 +321,7 @@ Authorization: Bearer <token>
 ```
 
 **Error Response (404 Not Found)**
+
 ```json
 {
   "success": false,
@@ -308,15 +336,15 @@ Authorization: Bearer <token>
 
 ## Error Codes
 
-| Code | Message | Meaning |
-|------|---------|---------|
-| 200 | OK | Success |
-| 201 | Created | Resource created successfully |
-| 400 | Bad Request | Validation failed or malformed request |
-| 401 | Unauthorized | Invalid/missing authentication |
-| 404 | Not Found | Resource doesn't exist |
-| 409 | Conflict | Resource already exists |
-| 500 | Internal Server Error | Server error |
+| Code | Message               | Meaning                                |
+| ---- | --------------------- | -------------------------------------- |
+| 200  | OK                    | Success                                |
+| 201  | Created               | Resource created successfully          |
+| 400  | Bad Request           | Validation failed or malformed request |
+| 401  | Unauthorized          | Invalid/missing authentication         |
+| 404  | Not Found             | Resource doesn't exist                 |
+| 409  | Conflict              | Resource already exists                |
+| 500  | Internal Server Error | Server error                           |
 
 ---
 
@@ -335,6 +363,7 @@ The token expires after **24 hours** by default (configurable in `.env`).
 ## cURL Examples
 
 ### Register
+
 ```bash
 curl -X POST http://localhost:3000/api/v1/register \
   -H "Content-Type: application/json" \
@@ -346,6 +375,7 @@ curl -X POST http://localhost:3000/api/v1/register \
 ```
 
 ### Login
+
 ```bash
 curl -X POST http://localhost:3000/api/v1/login \
   -H "Content-Type: application/json" \
@@ -356,12 +386,14 @@ curl -X POST http://localhost:3000/api/v1/login \
 ```
 
 ### Get Users (replace TOKEN)
+
 ```bash
 curl -X GET http://localhost:3000/api/v1/users \
   -H "Authorization: Bearer TOKEN"
 ```
 
 ### Create User
+
 ```bash
 curl -X POST http://localhost:3000/api/v1/register \
   -H "Content-Type: application/json" \
@@ -373,6 +405,7 @@ curl -X POST http://localhost:3000/api/v1/register \
 ```
 
 ### Update User (replace USERID and TOKEN)
+
 ```bash
 curl -X PUT http://localhost:3000/api/v1/users/USERID \
   -H "Authorization: Bearer TOKEN" \
@@ -383,6 +416,7 @@ curl -X PUT http://localhost:3000/api/v1/users/USERID \
 ```
 
 ### Delete User (replace USERID and TOKEN)
+
 ```bash
 curl -X DELETE http://localhost:3000/api/v1/users/USERID \
   -H "Authorization: Bearer TOKEN"
@@ -393,34 +427,43 @@ curl -X DELETE http://localhost:3000/api/v1/users/USERID \
 ## Response Structure
 
 **Success:**
+
 ```json
 {
   "success": true,
   "statusCode": 200,
   "message": "Descriptive message",
-  "data": { /* response data */ },
+  "data": {
+    /* response data */
+  },
   "timestamp": "ISO-8601 timestamp"
 }
 ```
 
 **Error:**
+
 ```json
 {
   "success": false,
   "statusCode": 400,
   "message": "Error message",
-  "errors": { /* field-level errors */ },
+  "errors": {
+    /* field-level errors */
+  },
   "timestamp": "ISO-8601 timestamp"
 }
 ```
 
 **Paginated:**
+
 ```json
 {
   "success": true,
   "statusCode": 200,
   "message": "Message",
-  "data": [ /* array of items */ ],
+  "data": [
+    /* array of items */
+  ],
   "pagination": {
     "page": 1,
     "limit": 10,
