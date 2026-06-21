@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcryptjs';
 import { ApiError } from '../middleware/errorHandler.js';
+import { QueryBuilder } from '../utils/queryBuilder.js';
 import { logger } from '../utils/logger.js';
 
 /**
@@ -58,7 +59,32 @@ export class UserService {
   }
 
   /**
-   * Get all users with pagination
+   * Get all users with advanced filtering, sorting, and pagination
+   * Supports complex queries via QueryBuilder
+   */
+  static queryUsers(queryParams) {
+    const allUsers = Array.from(users.values());
+
+    // Create query builder from query parameters
+    const queryBuilder = QueryBuilder.fromQuery(queryParams);
+
+    // Execute query: filter -> sort -> paginate
+    const result = queryBuilder.execute(allUsers);
+
+    // Sanitize users before returning
+    return {
+      users: result.data.map((u) => this._sanitizeUser(u)),
+      pagination: {
+        page: result.page,
+        limit: result.limit,
+        total: result.total,
+        pages: result.pages,
+      },
+    };
+  }
+
+  /**
+   * Get all users with basic pagination (kept for backwards compatibility)
    */
   static getAllUsers(page = 1, limit = 10) {
     const allUsers = Array.from(users.values());

@@ -42,17 +42,25 @@ export class UserController {
 
   /**
    * GET /api/v1/users
+   * Advanced search with filtering, sorting, and pagination
+   * Query examples:
+   *   - /users?search=john - Global search
+   *   - /users?username_contains=john - Filter by username
+   *   - /users?email_eq=test@gmail.com - Exact email match
+   *   - /users?createdAt_gte=2024-01-01 - Filter by date range
+   *   - /users?sort=-createdAt,username - Sort by multiple fields
+   *   - /users?page=2&limit=20 - Pagination
+   *   - /users?search=john&sort=-createdAt&page=1&limit=10 - Combined
    */
   static listUsers = asyncHandler(async (req, res) => {
-    const { page = 1, limit = 10 } = req.query;
-    const result = UserService.getAllUsers(parseInt(page), parseInt(limit));
+    const result = UserService.queryUsers(req.query);
 
     return res.json(
       paginatedResponse(
         result.users,
-        result.page,
-        result.limit,
-        result.total,
+        result.pagination.page,
+        result.pagination.limit,
+        result.pagination.total,
         'Users retrieved successfully',
       ),
     );
